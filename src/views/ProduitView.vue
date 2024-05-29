@@ -19,14 +19,7 @@
           <td>{{ produit.prixUnitaire }}</td>
           <td>{{ produit.unitesEnStock }}</td>
           <td>{{ produit.unitesCommandees }}</td>
-          <td>
-            <button @click="deleteEntity(produit._links.self.href)">
-              Supprimer
-            </button>
-          </td>
         </tr>
-      </table>
-      <table>
         <tr>
           <td>
             <button :disabled="data.infosPage.number === 0" @click="chargeProduits(data.liens.first.href)">
@@ -84,18 +77,6 @@ function chargeProduits(linkRef) {
       })
       .catch(showError);
 }
-
-
-/**
- * Supprime une entité
- * @param entityRef l'URI de l'entité à supprimer
- */
-function deleteEntity(entityRef) {
-  doAjaxRequest(entityRef, { method: "DELETE", headers: { "Accept": "application/json" }})
-      .then(chargeProduits)
-      .catch(showError);
-}
-
 
 // A l'affichage du composant, on affiche la liste
 onMounted(firstChargeProduits);
