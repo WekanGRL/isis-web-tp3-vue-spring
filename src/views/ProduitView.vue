@@ -71,20 +71,11 @@ function showError(error) {
   alert(error.message);
 }
 
-function chargeProduits() {
-  // Appel à l'API pour avoir la liste des catégories
-  // Trié par code, descendant
-  // Verbe HTTP GET par défaut
-  doAjaxRequest("/api/produits?size=5&page=0&sort=nom,asc")
-      .then((json) => {
-        data.listeProduits = json._embedded.produits;
-        data.liens = json._links;
-        data.infosPage = json.page;
-      })
-      .catch(showError);
+function firstChargeProduits() {
+  chargeProduits("/api/produits?size=5&page=0&sort=nom,asc");
 }
 
-function goTo(linkRef) {
+function chargeProduits(linkRef) {
   doAjaxRequest(linkRef)
       .then((json) => {
         data.listeProduits = json._embedded.produits;
@@ -107,7 +98,7 @@ function deleteEntity(entityRef) {
 
 
 // A l'affichage du composant, on affiche la liste
-onMounted(chargeProduits);
+onMounted(firstChargeProduits);
 </script>
 
 
