@@ -29,22 +29,22 @@
       <table>
         <tr>
           <td>
-            <button :disabled="data.infosPage.number === 0" @click="goTo(data.liens.first.href)">
+            <button :disabled="data.infosPage.number === 0" @click="chargeProduits(data.liens.first.href)">
               ⇇
             </button>
           </td>
           <td>
-            <button :disabled="data.infosPage.number === 0" @click="goTo(data.liens.prev.href)">
+            <button :disabled="data.infosPage.number === 0" @click="chargeProduits(data.liens.prev.href)">
               ←
             </button>
           </td>
           <td>
-            <button :disabled="data.infosPage.number + 1 === data.infosPage.totalPages" @click="goTo(data.liens.next.href)">
+            <button :disabled="data.infosPage.number + 1 === data.infosPage.totalPages" @click="chargeProduits(data.liens.next.href)">
               →
             </button>
           </td>
           <td>
-            <button :disabled="data.infosPage.number + 1 === data.infosPage.totalPages" @click="goTo(data.liens.last.href)">
+            <button :disabled="data.infosPage.number + 1 === data.infosPage.totalPages" @click="chargeProduits(data.liens.last.href)">
               ⇉
             </button>
           </td>
