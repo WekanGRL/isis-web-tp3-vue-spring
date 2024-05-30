@@ -1,8 +1,17 @@
 <template>
   <main>
     <div>
+      <h1>Les catégories de produits</h1>
+      <select @change="chargeProduits()" v-model="categorieSelectionnee">
+        <option selected="true" disabled="disabled">Sélectionnez une catégorie</option>
+        <option v-for="categorie in data.listeCategories" :key="categorie.code" :value="categorie._links.produits.href">
+          {{ categorie.libelle }}
+        </option>
+      </select>
+    </div>
+    <div>
       <table>
-        <caption>Les produits - Page {{ data.infosPage.number + 1 }}/{{ data.infosPage.totalPages }}</caption>
+        <caption>Les produits</caption>
         <tr>
           <th>Nom</th>
           <th>Prix</th>
@@ -20,42 +29,21 @@
           <td>{{ produit.unitesEnStock }}</td>
           <td>{{ produit.unitesCommandees }}</td>
         </tr>
-        <tr>
-          <td>
-            <button :disabled="data.infosPage.number === 0" @click="chargeProduits(data.liens.first.href)">
-              ⇇
-            </button>
-          </td>
-          <td>
-            <button :disabled="data.infosPage.number === 0" @click="chargeProduits(data.liens.prev.href)">
-              ←
-            </button>
-          </td>
-          <td>
-            <button :disabled="data.infosPage.number + 1 === data.infosPage.totalPages" @click="chargeProduits(data.liens.next.href)">
-              →
-            </button>
-          </td>
-          <td>
-            <button :disabled="data.infosPage.number + 1 === data.infosPage.totalPages" @click="chargeProduits(data.liens.last.href)">
-              ⇉
-            </button>
-          </td>
-        </tr>
       </table>
     </div>
   </main>
 </template>
 
 <script setup>
-import { reactive, onMounted } from "vue";
+import {reactive, onMounted, ref} from "vue";
 import { doAjaxRequest } from "@/api";
+
+const categorieSelectionnee = ref("");
 
 let data = reactive({
   // La liste des catégories affichée sous forme de table
+  listeCategories : [],
   listeProduits: [],
-  liens: [],
-  infosPage: [],
 });
 
 function showError(error) {
@@ -64,20 +52,27 @@ function showError(error) {
   alert(error.message);
 }
 
-function chargeProduits(linkRef) {
-  doAjaxRequest(linkRef)
+function chargeCategories() {
+  // Appel à l'API pour avoir la liste des catégories
+  // Trié par code, descendant
+  // Verbe HTTP GET par défaut
+  doAjaxRequest("/api/categories?sort=code,desc")
       .then((json) => {
-        data.listeProduits = json._embedded.produits;
-        data.liens = json._links;
-        data.infosPage = json.page;
+        data.listeCategories = json._embedded.categories;
       })
       .catch(showError);
 }
 
-// A l'affichage du composant, on affiche la liste
-onMounted( () => {
-  chargeProduits("/api/produits?size=5&page=0&sort=nom,asc");
-});
+function chargeProduits() {
+  doAjaxRequest(categorieSelectionnee._value)
+      .then((json) => {
+        data.listeProduits = json._embedded.produits;
+      })
+      .catch(showError);
+}
+
+// A l'affichage du composant, on charge la liste des catégories
+onMounted(chargeCategories);
 </script>
 
 
